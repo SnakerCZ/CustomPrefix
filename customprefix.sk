@@ -1,0 +1,15 @@
+##########################
+#      CustomPrefix      #
+#                        #
+#  Compatible with PEX   #
+#                        #
+#   (c)2017 snakercz_    #
+#                        #
+##########################
+
+# THIS SKRIPT REQUIRES SkQuery AND PermissionsEx
+
+
+on join:
+  if player has permission "customprefix.notify":
+    
