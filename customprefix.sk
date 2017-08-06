@@ -9,7 +9,207 @@
 
 # THIS SKRIPT REQUIRES SkQuery AND PermissionsEx
 
+options:
+  version: 1.0
+
+variables:
+  {enlocale} = 1
 
 on join:
   if player has permission "customprefix.notify":
-    
+    if text from "http://raw.githubusercontent.com/SnakerCZ/CustomPrefix/master/ver.md" is not "{@version}":
+      if {enlocale} is 1:
+        message "&c&l? &cOudated version of CustomPrefix detected on this server! Update it from: "
+      else:
+        message "&c&l? &cNa vasem serveru byla detekovana zastarala verze CustomPrefix! Aktualizujte ji z: "
+    else:
+      if {enlocale} is 1:
+        message "&2&l? &2You are running on latest version of &4CustomPrefix!" to player           
+      else:
+        message "&2&l? &2Na vasem serveru bezi nejnovejsi verze &4CustomPrefix!" to player 
+        
+command /customprefix [<text>] [<text>]:
+  trigger:
+    set {verze} to {@version}
+    else if arg-1 is "help":
+      if player has permission "customprefix.help": 
+        if {enlocale} is 1:
+          message "&4  CustomPrefix"
+          message "&4  by snakercz_"
+          message "&c"
+          message "&c"
+          message "&3   /customprefix help &f- &eHelp command"
+          message "&3   /customprefix setlocale <&4cz&2/&1en&3> &f- &eSet language of plugin"
+          message "&3   /customprefix about &f- &eAbout plugin"
+          message "&3   /setprefix <prefix> [player] &f- &ePrefix set command"
+          message "&3   /deleteprefix [player] &f- &eDeletes prefix"
+          message "&3   /prefix <player> &f- &eShows players prefix"
+          message "&c"
+          message "&3   <> &f= &eNeeded arguments&3, []&f = &eOptional arguments"
+        else:
+          message "&4  CustomPrefix"
+          message "&4  by snakercz_"
+          message "&c"
+          message "&c"
+          message "&3   /customprefix help &f- &eNapoveda"
+          message "&3   /customprefix setlocale <&4cz&2/&1en&3> &f- &eNastaveni jazyka"
+          message "&3   /customprefix about &f- &eO pluginu"
+          message "&3   /setprefix <prefix> [hrac] &f- &ePrikaz na nastaveni prefixu"
+          message "&3   /deleteprefix [hrac] &f- &ePrikaz na smazani prefixu"
+          message "&3   /prefix <hrac> &f- &eUkaze hracuv prefix"
+          message "&c"
+          message "&3   <> &f= &ePovinne argumenty&3, []&f = &eVolitelne argumenty"
+      else:
+        if {enlocale} is 1:
+          message "&4&lInsufficient permissions!"
+        else:
+          message "&4&lNedostatecne opravneni!"
+    else if arg-1 is "setlocale":
+      if player has permission "customprefix.setlocale":
+        if arg-2 is set:
+          if arg-2 is "cz" or "en":
+            if arg-2 is "cz":
+              set {enlocale} to 0
+              message "&aJazyk pluginu &4CustomPrefix &a nastaven na &4cestina&a." to player
+            if arg-2 is "en":
+              set {enlocale} to 1
+              message "&aLanguage of &4CustomPrefix&a was set to &1english&a." to player
+          else:
+            if {enlocale} is 1:
+              message "&6Unknown value! Only possible values is: &1en&6/&4cz" to player
+            if {enlocale} is 0:
+              message "&6Neznama hodnota! Jedine mozne hodnoty jsou: &1en&6/&4cz" to player
+        else:
+          if {enlocale} is 1:
+            message "&6Language argument missing!" to player
+          if {enlocale} is 0:
+            message "&6Chybi argument jazyka!" to player
+      else:
+        if {enlocale} is 1:
+          message "&4&lInsufficient permissions!" to player
+        if {enlocale} is 0:
+          message "&4&lNedostatecne opravneni!" to player
+    else if arg-1 is "about":
+      if player has permission "customprefix.about":
+          message "&4CustomPrefix &3v%{verze}%"
+          message "&3(c)2017 snakercz_"
+    else:
+      message "&4CustomPrefix &f- &3/customprefix help"
+      
+command /setprefix <text> [<offline player>]:
+  usage: /setprefix <prefix> [player]
+  trigger:
+    if player has permission "customprefix.setprefix":
+      if arg-1 is set:
+        if arg-2 is set:
+          set {playerP.%player%} to arg-2
+          set {prefixR.%player%} to arg-1
+          if {playerP.%player%} is online:
+            if player has permission "customprefix.setprefixothers":
+              set {prefix.%{playerP.%player%}%} to arg-1
+              run player command "/pex user %{playerP.%player%}% prefix %{prefixR.%player%}% " as op
+              if {enlocale} is 1:
+                message "&3Prefix of player %{playerP.%player%}% set to %{prefixR.%player%}%" 
+              else:
+                message "&3Prefix hrace %{playerP.%player%}% nastaven na %{prefixR.%player%}%"
+            else:
+              if {enlocale} is 1:
+                message "&4&lInsufficient permissions!" to player
+              if {enlocale} is 0:
+                message "&4&lNedostatecne opravneni!" to player 
+          else:
+            if {enlocale} is 1:
+              message "&cPlayer must be online!"
+            else:
+              message "&cHrac musi byt online!"      
+        else:
+          set {prefixR.%player%} to arg-1
+          set {prefix.%player%} to arg-1
+          run player command "/pex user %player% prefix %{prefixR.%player%}% "
+          if {enlocale} is 1:
+            message "&3Your prefix was set to %{prefixR.%player%}%"
+          else:
+            message "&3Vas prefix byl nastaven na %{prefixR.%player%}%" 
+      else:
+        if {enlocale} is 1:
+          message "&cYou must set prefix!"
+        else:
+          message "&cMusite nastavit prefix!"
+    else:
+      if {enlocale} is 1:
+        message "&4&lInsufficient permissions!" to player
+      if {enlocale} is 0:
+        message "&4&lNedostatecne opravneni!" to player
+        
+command /deleteprefix [<offline player>]:
+  trigger:
+    if player has permission "customprefix.delprefix":
+      if arg-1 is set:
+        set {playerD.%player%} to arg-1
+        if {playerD.%player%} is online:
+          if player has permission "customprefix.delprefixothers":
+            run player command "/pex user %{playerD.%player%}% prefix " as op
+            if {enlocale} is 1:
+              message "&3Prefix of player %{playerD.%player%}% was reseted!" 
+            else:
+              message "&3Prefix hrace %{playerD.%player%}% byl resetovan!"
+          else:
+            if {enlocale} is 1:
+              message "&4&lInsufficient permissions!" to player
+            if {enlocale} is 0:
+              message "&4&lNedostatecne opravneni!" to player 
+        else:
+          if {enlocale} is 1:
+            message "&cPlayer must be online!"
+          else:
+            message "&cHrac musi byt online!"  
+      else:
+        run player command "/pex user %player% prefix " as op
+        if {enlocale} is 1:
+          message "&3Your prefix was reseted!"
+        else:
+          message "&3Vas prefix byl resetovan!" 
+    else:
+      if {enlocale} is 1:
+        message "&4&lInsufficient permissions!" to player
+      if {enlocale} is 0:
+        message "&4&lNedostatecne opravneni!" to player 
+      
+command /prefix [<offline player>]:
+  trigger:
+    if player has permission "customprefix.display":
+      if arg-1 is set:
+        set {playerDI} to arg-1
+        if {prefix.%{playerDI}%} is neni:
+          if {enlocale} is 1:
+            message "&3Player don't have prefix"
+          else:
+            message "&3Hrac nema prefix"
+        else:
+          if {enlocale} is 1:
+            message "&3Player's prefix is: %{prefix.%{playerDI}%}"
+          else:
+            message "&3Hracuv prefix je: %{prefix.%{playerDI}%}"          
+      else:
+        if {prefix.%player%} is neni:
+          if {enlocale} is 1:
+            message "&3You don't have prefix"
+          else:
+            message "&3Nemas prefix"
+        else:
+          if {enlocale} is 1:
+            message "&3Your prefix is: %{prefix.%player%}%"
+          else:
+            message "&3Tvuj prefix je: %{prefix.%player%}%"
+    else:
+      if {enlocale} is 1:
+        message "&4&lInsufficient permissions!" to player
+      if {enlocale} is 0:
+        message "&4&lNedostatecne opravneni!" to player
+       
+on skript start:
+  set {verze} to {@version}
+  message "[CustomPrefix] CustomPrefix v%{verze}% (c)2017 snakercz_"           
+      
+                
+                
